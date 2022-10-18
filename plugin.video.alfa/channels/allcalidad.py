@@ -184,7 +184,7 @@ def findvideos(item):
             continue
         if url:
             encontrado.append(url)
-            new_item= Item(channel=item.channel, url=url, title='%s', action="play", contentTitle=item.contentTitle,
+            new_item= Item(channel=item.channel, url=url, title='%s', action="play", contentTitle=item.contentTitle, server=srv,
                            contentThumbnail=item.thumbnail, infoLabels=item.infoLabels, language="Latino")
             if "torrent" in srv.lower():
                 new_item.server = "Torrent"
@@ -223,5 +223,8 @@ def clear_url(url):
 
 
 def play(item):
+    if "download=" in item.url:
+        data = httptools.downloadpage(item.url).data
+        item.url = scrapertools.find_single_match(data, '_blank" href="([^"]+)')
     item.thumbnail = item.contentThumbnail
     return [item]
